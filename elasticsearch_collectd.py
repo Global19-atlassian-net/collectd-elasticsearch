@@ -758,6 +758,7 @@ class Cluster(object):
 
         self.es_current_master = False
         self.node_id = None
+        self.es_info_loaded = False
 
         self.extra_dimensions = ''
 
@@ -897,6 +898,8 @@ class Cluster(object):
         fetches all required stats from ElasticSearch. This method also sets
         self.es_cluster
         """
+        if not self.es_info_loaded:
+            self.load_es_info()
 
         node_json_stats = self.fetch_url(self.es_node_url)
         if node_json_stats:
@@ -982,6 +985,7 @@ class Cluster(object):
                         version %s, cluster %s and master %s' %
                         (self.es_version, self.es_cluster,
                          self.es_master_eligible))
+            self.es_info_loaded = True            
             return
 
         # Identify the current node
